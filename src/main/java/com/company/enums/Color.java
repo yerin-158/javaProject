@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 public enum Color {
-    RED, YELLOW, BLACK, BLUE, GREEN, WHITE, GRAY;
+    RED, YELLOW, BLUE, GREEN;
 
     private static final List<Color> VALUES = Collections.unmodifiableList(Arrays.asList(values()));
     private static final int SIZE = VALUES.size();
