@@ -27,5 +27,8 @@ public class WidgetController implements BaseController<Widget> {
         return widgets;
     }
 
+    public Widget getColorWidget(Color color){
+        return Widget.builder().color(color).weight(RandomController.randomInt(1,100)).build();
+    }
 
 }
