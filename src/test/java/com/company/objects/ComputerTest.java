@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -135,11 +136,53 @@ class ComputerTest {
         }
     }
 
+    @Test
+    @DisplayName("flatmap을 이용하여 연속적인 Optional 객체를 처리한다.")
+    public void computerOptional1() {
+        String target = "ABC123";
+
+        SoundCard soundCard = new SoundCard();
+        soundCard.setUsb(Optional.of(new USB(target)));
+        Computer computer = Computer.builder().soundCard(soundCard).build();
+
+        computer.toOptional().flatMap(Computer::getSoundCard)
+                .flatMap(SoundCard::getUsb)
+                .filter(usb -> usb.getSerialNumber().equals(target))
+                .ifPresent(none -> System.out.println("is ok, target : " + target));
+
+    }
+
+    @Test
+    @DisplayName("flatmap을 이용하여 연속적인 Optional 객체를 처리한다.")
+    public void computerOptional2() {
+        String target = "ABC123";
+
+        SoundCard soundCard2 = SoundCard.builder().usb(null).build();
+        SoundCard soundCard3 = SoundCard.builder().usb(new USB(target)).build();
+
+        Computer computer1 = Computer.builder().soundCard(null).build();
+        Computer computer2 = Computer.builder().soundCard(soundCard2).build();
+        Computer computer3 = Computer.builder().soundCard(soundCard3).build();
+
+        List<Computer> computerList = Arrays.asList(computer1, computer2, computer3);
+
+        for (int index = 0; index < computerList.size(); ++index) {
+            findTarget(computerList.get(index), index, target);
+        }
+    }
+
     private void findSerialNumber3(Optional<SoundCard> maybeSoundCard, int index) {
         maybeSoundCard.map(SoundCard::getUsb)
-                        .filter(usb -> usb.isPresent())
-                        .filter(usb -> usb.get().getSerialNumber().equals("3.0"))
-                        .ifPresent(none -> System.out.println("index : " + index));
+                .filter(usb -> usb.isPresent())
+                .filter(usb -> usb.get().getSerialNumber().equals("3.0"))
+                .ifPresent(none -> System.out.println("index : " + index));
+    }
+
+    private void findTarget(Computer computer, int index, String target) {
+        computer.toOptional().flatMap(Computer::getSoundCard)
+                .flatMap(SoundCard::getUsb)
+                .filter(usb -> usb.getSerialNumber().equals(target))
+                .ifPresent(none -> System.out.println("is ok, index : " + index + ", target : " + target));
     }
 
 }
